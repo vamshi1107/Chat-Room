@@ -15,6 +15,9 @@ const Room=(props)=>{
      var [user,setUser]=useState({})
     var [login,setLogin]=useState(false)
     const cid="68953686096-d71ouf7jgcso0fjbqtseo761kjqnurta.apps.googleusercontent.com"
+     let audio=new Audio("https://firebasestorage.googleapis.com/v0/b/chatroom-9f810.appspot.com/o/Iphone%20Ting%20Message%20Tone.mp3?alt=media&token=dd314fce-ced4-4bc3-82b1-12d669e26ae1")
+     var areu=false
+
 
    const firestore=getFirestore(firebase)
  
@@ -22,8 +25,6 @@ const Room=(props)=>{
         var message=getInput()
         const coll=doc(firestore,messagepath(id,new Date().toISOString()))
         const data=await setDoc(coll,msgbuilder(message,user),{merge:true})
-        
-
         clearInput()
     }
 
@@ -75,9 +76,21 @@ const Room=(props)=>{
         onSnapshot(collection(firestore,fetchpath(id)),(snap)=>{
             const d=snap.docs.map(data=>data.data())
             setData(d)
+            ring(d,JSON.parse(localStorage.getItem("user")))     
         })
       
     }
+
+    function ring(d,user){
+        var v=d
+        var c=Array.from(v).pop()
+        if(user){
+            if(c["user"]["email"]!=user.email){
+                audio.play()
+            }
+         }  
+    }
+
 
     function keypress(e){
         if(e.key=="Enter"){
@@ -149,7 +162,6 @@ const Room=(props)=>{
         var v=document.querySelectorAll(".wholemsg")
         var c=Array.from(v).pop()
         if(c){
-            console.log(c)
             c.focus()
             c.scrollIntoView();
         }
@@ -158,6 +170,7 @@ const Room=(props)=>{
     return (
         <div>
             {login?
+            
                 <div className="page">
                     <div className="side">
                         <div className="memcon">
@@ -190,15 +203,18 @@ const Room=(props)=>{
                         </div>
                     </div>
              :
-                <div>
-                        <GoogleLogin    
-                        clientId={cid}
-                        buttonText="login with google"
-                        cookiePolicy={"single_host_origin"}
-                        onSuccess={loginsuccess}
-                        onFailure={loginfailure}
-                        ></GoogleLogin>
-                </div>
+                 <div className="pv">
+                   <GoogleLogin
+                  clientId={cid}
+                  buttonText="Login with google"
+                  cookiePolicy={"single_host_origin"}
+                  onSuccess={loginsuccess}
+                  onFailure={loginfailure}
+                ></GoogleLogin>
+                    <div>
+                            <lottie-player src="https://assets3.lottiefiles.com/private_files/lf30_gqs2uqht.json"   speed="1"  style={{height:"50vh"}}  loop  autoplay></lottie-player>
+                    </div> 
+        </div>
             }
         
         </div>

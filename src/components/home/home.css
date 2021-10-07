@@ -1,0 +1,24 @@
+#player {
+  height: 50%;
+  width: 50%;
+}
+
+.pv {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #1b222c;
+}
+
+#createbut {
+  width: 16vw;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: large;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}

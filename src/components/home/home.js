@@ -5,6 +5,8 @@ import {randomBytes} from 'crypto'
 import { useHistory } from "react-router";
 import GoogleLogin from "react-google-login";
 
+import './home.css';
+
 const Home=(props)=>{
 
     const history=useHistory()
@@ -50,17 +52,22 @@ const Home=(props)=>{
     },[])
 
     return (
-        <div>
+        <div className="pv">
             {
             !login?<GoogleLogin
                   clientId={cid}
-                  buttonText="login with google"
+                  buttonText="Login with google"
                   cookiePolicy={"single_host_origin"}
                   onSuccess={loginsuccess}
                   onFailure={loginfailure}
                 ></GoogleLogin>:
-                <button onClick={(e)=>{create()}}>Create</button>
+                <div>
+                        <button onClick={(e)=>{create()}} id="createbut">Create</button>
+                </div>
             }
+             <div>
+                    <lottie-player src="https://assets3.lottiefiles.com/private_files/lf30_gqs2uqht.json"   speed="1"  style={{height:"50vh"}}  loop  autoplay></lottie-player>
+            </div>
             
             
         </div>
