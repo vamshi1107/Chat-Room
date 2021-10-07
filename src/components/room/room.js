@@ -41,7 +41,9 @@ const Room=(props)=>{
             if(there){
                 var v=[]
                 for(let i of mem){
-                        v.push(i["member"])
+                        if(!checkdup(v,i)){
+                            v.push(i["member"])
+                        }
                 }
                 setMembers(v)
             }
@@ -49,6 +51,16 @@ const Room=(props)=>{
                 addDoc(coll,{"member":d},{merge:true})
             }
         })
+    }
+
+    function checkdup(v,i){
+        var c=false
+        for(let j of v){
+            if(j["email"]==i["member"]["email"]){
+                c=true
+            }
+        }
+        return c
     }
 
     const getInput=()=>{
@@ -133,6 +145,16 @@ const Room=(props)=>{
         console.log(response)
     }
 
+    function focus(){
+        var v=document.querySelectorAll(".wholemsg")
+        var c=Array.from(v).pop()
+        if(c){
+            console.log(c)
+            c.focus()
+            c.scrollIntoView();
+        }
+    }
+
     return (
         <div>
             {login?
@@ -158,6 +180,7 @@ const Room=(props)=>{
                                             showMSG(e)
                                         )
                                     })}
+                                {focus()} 
                             </div>
                             <div className="sendcon">
                                     <div className="inpcon">
