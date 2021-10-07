@@ -11,7 +11,7 @@ const Home=(props)=>{
     const firestore=getFirestore(firebase)
     var [user,setUser]=useState({})
     var [login,setLogin]=useState(false)
-    const cid="68953686096-ib5j3874c8dji08huiq55qp7jq0gog1s.apps.googleusercontent.com"
+    const cid="68953686096-d71ouf7jgcso0fjbqtseo761kjqnurta.apps.googleusercontent.com"
 
      const create=async ()=>{
         var id=randomBytes(16).toString("hex")
