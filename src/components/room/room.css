@@ -1,19 +1,20 @@
 .page {
   height: 100vh;
   width: 100vw;
-  background-color: blueviolet;
+  background-color: #1b222c;
   display: flex;
   flex-direction: row;
   overflow: hidden;
 }
 
 .side {
-  width: 20%;
-  background-color: blue;
+  width: 23%;
+  background-color: #1b222c;
+  border-right: 1px solid #252f3f;
 }
 
 .canvas {
-  width: 80%;
+  width: 77%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,23 +22,26 @@
 }
 
 .msgcon {
-  background-color: red;
+  background-color: #1b222c;
   width: 100%;
-  height: 95%;
+  height: 93%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
 .sendcon {
-  background-color: white;
+  border-top: 1px solid #252f3f;
+  background-color: #1b222c;
   width: 100%;
   height: 5%;
 }
 
 .inpcon {
-  height: 100%;
-  background-color: white;
+  height: 99%;
+  padding: 5px;
+  background-color: #1b222c;
+  border-top: 1px solid #252f3f;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -45,24 +49,27 @@
 }
 
 .inpcon > input {
-  background-color: white;
+  background-color: #1b222c;
   width: 100%;
   height: 100%;
   border: none;
   outline: none;
   font-size: 1.1rem;
+  caret-color: white;
 }
 
 .msg {
+  color: white;
   max-width: 40%;
   min-width: 25%;
-  background-color: yellow;
   height: max-content;
+  min-height: 30px;
   display: flex;
   margin: 10px;
   padding: 10px;
   word-wrap: break-word;
   flex-direction: column;
+  border: 1px solid #252f3f;
 }
 
 .userpic {
@@ -94,19 +101,43 @@
 }
 
 .wholemsg.this > .msg {
+  background-color: #54709e;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
 .wholemsg.other > .msg {
+  background-color: #25303f;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
   border-top-right-radius: 10px;
 }
 
 .uname {
+  color: #9a84d1;
   font-size: 0.8rem;
   font-weight: bold;
   margin: 2px;
+}
+
+.mem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #252f3f;
+  color: white;
+}
+
+.memimg {
+  height: 50px;
+  width: 50px;
+}
+
+.memimg > img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
 }

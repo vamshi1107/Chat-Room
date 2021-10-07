@@ -1,7 +1,7 @@
-import { collection,doc,getFirestore, setDoc ,addDoc,updateDoc, onSnapshot} from "@firebase/firestore";
+import { collection,doc,getFirestore, setDoc ,addDoc,updateDoc, onSnapshot, DocumentSnapshot} from "@firebase/firestore";
 import firebase from "../../database/firebase";
 import {useEffect,useState} from 'react'
-import { fetchpath, messagepath } from "../../utils/paths";
+import { fetchpath, memberspath, messagepath ,memberfetchspath} from "../../utils/paths";
 import { msgbuilder } from "../../utils/msgbuilder";
 import  './room.css';
 import GoogleLogin from "react-google-login";
@@ -10,6 +10,7 @@ import GoogleLogin from "react-google-login";
 const Room=(props)=>{
 
     var [data,setData]=useState([])
+    var [members,setMembers]=useState([])
     const id=props.match.params.id
      var [user,setUser]=useState({})
     var [login,setLogin]=useState(false)
@@ -17,14 +18,37 @@ const Room=(props)=>{
 
    const firestore=getFirestore(firebase)
  
-      async function sendMessage(){
-       var message=getInput()
+    async function sendMessage(){
+        var message=getInput()
+        const coll=doc(firestore,messagepath(id,new Date().toISOString()))
+        const data=await setDoc(coll,msgbuilder(message,user),{merge:true})
+        
 
-      const coll=doc(firestore,messagepath(id,new Date().toISOString()))
-      const data=await setDoc(coll,msgbuilder(message,user),{merge:true})
-      clearInput()
+        clearInput()
+    }
 
 
+    async function checkMembers(d){
+        var coll=collection(firestore,memberspath(id))
+         onSnapshot(coll,(snap)=>{
+            const mem=snap.docs.map(data=>data.data())
+            var there=false
+            for(let i of mem){
+                if(i["member"]["email"]==d.email){
+                    there=true
+                }
+            }
+            if(there){
+                var v=[]
+                for(let i of mem){
+                        v.push(i["member"])
+                }
+                setMembers(v)
+            }
+            else{
+                addDoc(coll,{"member":d},{merge:true})
+            }
+        })
     }
 
     const getInput=()=>{
@@ -35,11 +59,10 @@ const Room=(props)=>{
         document.getElementById("imp").value=""
     }
 
-    async function getRooms(){
+    async function getMessages(){
         onSnapshot(collection(firestore,fetchpath(id)),(snap)=>{
             const d=snap.docs.map(data=>data.data())
             setData(d)
-            console.log(d)
         })
       
     }
@@ -56,8 +79,7 @@ const Room=(props)=>{
                 return (
                     <div className="wholemsg this">
                         <div className="userpic"><img src={e["user"].imageUrl}></img></div>
-                            <div key={Math.random().toString()*10000} className="msg">
-                                    <div className="uname">{e["user"]["name"]}</div>
+                            <div key={Math.random().toString()*100000} className="msg">
                                    <div className="content">{e.message}</div>
                             </div>
                      </div>
@@ -67,7 +89,7 @@ const Room=(props)=>{
                 return (
                 <div className="wholemsg other">
                 <div className="userpic"><img src={e["user"].imageUrl}></img></div>
-                    <div key={Math.random().toString()*10000} className="msg">
+                    <div key={Math.random().toString()*100000} className="msg">
                         <div className="uname">{e["user"]["name"]}</div>
                         <div className="content">{e.message}</div>
                      </div>
@@ -81,8 +103,9 @@ const Room=(props)=>{
         if(data){
             setUser({...data})
             setLogin(true)
+            checkMembers(data)
+            getMessages()
         }
-        getRooms()
     }, [])
 
   function loginsuccess(response){
@@ -110,7 +133,20 @@ const Room=(props)=>{
         <div>
             {login?
                 <div className="page">
-                    <div className="side"></div>
+                    <div className="side">
+                        <div className="memcon">
+                            {members.map(mem=>{
+                                return (
+                                    <div className="mem">
+                                        <div className="memimg">
+                                          <img src={mem["imageUrl"]}></img>
+                                        </div>
+                                        <div className="memname">{mem["name"]}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
                         <div className="canvas">
                             <div className="msgcon">
                                     {data.map(e=>{
