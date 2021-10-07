@@ -14,7 +14,7 @@ const Room=(props)=>{
     const id=props.match.params.id
      var [user,setUser]=useState({})
     var [login,setLogin]=useState(false)
-    const cid="68953686096-ib5j3874c8dji08huiq55qp7jq0gog1s.apps.googleusercontent.com"
+    const cid="68953686096-d71ouf7jgcso0fjbqtseo761kjqnurta.apps.googleusercontent.com"
 
    const firestore=getFirestore(firebase)
  
@@ -80,6 +80,7 @@ const Room=(props)=>{
                     <div className="wholemsg this">
                         <div className="userpic"><img src={e["user"].imageUrl}></img></div>
                             <div key={Math.random().toString()*100000} className="msg">
+                                    <div className="uname">{e["user"]["name"]}</div>
                                    <div className="content">{e.message}</div>
                             </div>
                      </div>
@@ -105,6 +106,8 @@ const Room=(props)=>{
             setLogin(true)
             checkMembers(data)
             getMessages()
+            checkMembers(data)
+            getMessages()
         }
     }, [])
 
@@ -113,6 +116,7 @@ const Room=(props)=>{
          setUser({...data})
          setLogin(true)
         localStorage.setItem("user",JSON.stringify(data))
+        window.location.reload()
     }
 
     function loginfailure(response){

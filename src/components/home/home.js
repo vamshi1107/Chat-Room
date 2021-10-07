@@ -59,10 +59,10 @@ const Home=(props)=>{
                   onSuccess={loginsuccess}
                   onFailure={loginfailure}
                 ></GoogleLogin>:
-                <div></div>
+                <button onClick={(e)=>{create()}}>Create</button>
             }
             
-            <button onClick={(e)=>{create()}}>Create</button>
+            
         </div>
     )
 }
