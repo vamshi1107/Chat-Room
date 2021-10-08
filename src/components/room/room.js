@@ -23,8 +23,12 @@ const Room=(props)=>{
  
     async function sendMessage(){
         var message=getInput()
-        const coll=doc(firestore,messagepath(id,new Date().toISOString()))
-        const data=await setDoc(coll,msgbuilder(message,user),{merge:true})
+        var c=message;
+        if(c.replace(" ","").length > 0){
+            const coll=doc(firestore,messagepath(id,new Date().toISOString()))
+            const data=await setDoc(coll,msgbuilder(message,user),{merge:true})
+        }
+
         clearInput()
     }
 
