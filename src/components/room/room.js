@@ -5,6 +5,7 @@ import { fetchpath, memberspath, messagepath ,memberfetchspath} from "../../util
 import { msgbuilder } from "../../utils/msgbuilder";
 import  './room.css';
 import GoogleLogin from "react-google-login";
+import {getAuth,signInWithPopup,GoogleAuthProvider} from "@firebase/auth"
 
 
 const Room=(props)=>{
@@ -13,6 +14,8 @@ const Room=(props)=>{
     var [members,setMembers]=useState([])
     const id=props.match.params.id
      var [user,setUser]=useState({})
+       const auth=getAuth(firebase)
+    const provider = new GoogleAuthProvider();
     var [login,setLogin]=useState(false)
     const cid="68953686096-d71ouf7jgcso0fjbqtseo761kjqnurta.apps.googleusercontent.com"
      let audio=new Audio("https://firebasestorage.googleapis.com/v0/b/chatroom-9f810.appspot.com/o/Iphone%20Ting%20Message%20Tone.mp3?alt=media&token=dd314fce-ced4-4bc3-82b1-12d669e26ae1")
@@ -20,11 +23,24 @@ const Room=(props)=>{
 
 
    const firestore=getFirestore(firebase)
+
+    useEffect(() => {
+         var data=JSON.parse(localStorage.getItem("user"))
+        if(data){
+            setUser({...data})
+            setLogin(true)
+            checkMembers(data)
+            getMessages()
+            checkMembers(data)
+            getMessages()
+            console.log(members)
+        }
+    }, [])
  
     async function sendMessage(){
         var message=getInput()
         var c=message;
-        if(c.replace(" ","").length > 0){
+        if(c.replaceAll(" ","").length > 0){
             const coll=doc(firestore,messagepath(id,new Date().toISOString()))
             const data=await setDoc(coll,msgbuilder(message,user),{merge:true})
         }
@@ -80,15 +96,15 @@ const Room=(props)=>{
         onSnapshot(collection(firestore,fetchpath(id)),(snap)=>{
             const d=snap.docs.map(data=>data.data())
             setData(d)
-            ring(d,JSON.parse(localStorage.getItem("user")))     
         })
       
     }
 
+
     function ring(d,user){
         var v=d
         var c=Array.from(v).pop()
-        if(user){
+        if(user!=undefined){
             if(c["user"]["email"]!=user.email){
                 audio.play()
             }
@@ -103,63 +119,35 @@ const Room=(props)=>{
 
     }
 
-    function showMSG(e){
-            if(e["user"].email===user.email){
-                return (
-                    <div className="wholemsg this">
-                        <div className="userpic"><img src={e["user"].imageUrl}></img></div>
-                            <div key={Math.random().toString()*100000} className="msg">
-                                    <div className="uname">{e["user"]["name"]}</div>
-                                   <div className="content">{e.message}</div>
-                            </div>
-                     </div>
-                )
-            }
-            else{
-                return (
-                <div className="wholemsg other">
-                <div className="userpic"><img src={e["user"].imageUrl}></img></div>
-                    <div key={Math.random().toString()*100000} className="msg">
-                        <div className="uname">{e["user"]["name"]}</div>
-                        <div className="content">{e.message}</div>
-                     </div>
-               </div>
-               )
-            }
+    function debug(e){
+        console.log(e)
+        return (<div></div>)
     }
 
-    useEffect(() => {
-         var data=JSON.parse(localStorage.getItem("user"))
-        if(data){
+    function showMSG(e){
+                return (
+                    <div className={e["user"].email===user.email?"wholemsg this":"wholemsg other"}>
+                        {debug(e)}
+                    <div className="userpic"><img src={e["user"].photoUrl}></img></div>
+                        <div key={Math.random().toString()*100000} className="msg">
+                            <div className="uname">{e["user"]["fullName"]}</div>
+                            <div className="content" >{e.message}</div>
+                        </div>
+                </div>
+                )
+    }
+
+
+
+      function loginEx(){
+        signInWithPopup(auth,provider).then(res=>{
+            var data=res._tokenResponse
             setUser({...data})
             setLogin(true)
-            checkMembers(data)
-            getMessages()
-            checkMembers(data)
-            getMessages()
-        }
-    }, [])
-
-  function loginsuccess(response){
-         var data=response.profileObj
-         setUser({...data})
-         setLogin(true)
-        localStorage.setItem("user",JSON.stringify(data))
-        window.location.reload()
-    }
-
-    function loginfailure(response){
-        setLogin(false)
-         setUser({})
-    }
-
-    function logoutsuccess(response){
-        setLogin(false)
-         setUser({})
-    }
-
-    function logoutfailure(response){
-        console.log(response)
+            localStorage.setItem("user",JSON.stringify(data))
+            window.location.reload()
+            console.log(data)
+        })
     }
 
     function focus(){
@@ -182,9 +170,9 @@ const Room=(props)=>{
                                 return (
                                     <div className="mem">
                                         <div className="memimg">
-                                          <img src={mem["imageUrl"]}></img>
+                                          <img src={mem["photoUrl"]}></img>
                                         </div>
-                                        <div className="memname">{mem["name"]}</div>
+                                        <div className="memname">{mem["fullName"]}</div>
                                     </div>
                                 )
                             })}
@@ -208,13 +196,9 @@ const Room=(props)=>{
                     </div>
              :
                  <div className="pv">
-                   <GoogleLogin
-                  clientId={cid}
-                  buttonText="Login with google"
-                  cookiePolicy={"single_host_origin"}
-                  onSuccess={loginsuccess}
-                  onFailure={loginfailure}
-                ></GoogleLogin>
+                <button className="loginbut" onClick={loginEx}>
+                    Login
+                </button>
                     <div>
                             <lottie-player src="https://assets3.lottiefiles.com/private_files/lf30_gqs2uqht.json"   speed="1"  style={{height:"50vh"}}  loop  autoplay></lottie-player>
                     </div> 

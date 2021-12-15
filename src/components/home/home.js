@@ -1,4 +1,5 @@
 import { collection,doc,getFirestore, setDoc ,addDoc,updateDoc, onSnapshot} from "@firebase/firestore";
+import {getAuth,signInWithPopup,GoogleAuthProvider} from "@firebase/auth"
 import firebase from "../../database/firebase";
 import {useEffect,useState} from 'react'
 import {randomBytes} from 'crypto'
@@ -11,36 +12,26 @@ const Home=(props)=>{
 
     const history=useHistory()
     const firestore=getFirestore(firebase)
+    const auth=getAuth(firebase)
+    const provider = new GoogleAuthProvider();
     var [user,setUser]=useState({})
     var [login,setLogin]=useState(false)
-    const cid="68953686096-d71ouf7jgcso0fjbqtseo761kjqnurta.apps.googleusercontent.com"
 
      const create=async ()=>{
         var id=randomBytes(16).toString("hex")
         var col=doc(firestore,"rooms/"+id+"/room/user")
+        console.log(user)
         var v=await setDoc(col,{"host":user})
         history.push("room/"+id)
     }
 
-    function loginsuccess(response){
-         var data=response.profileObj
-         setUser({...data})
-         setLogin(true)
-        localStorage.setItem("user",JSON.stringify(data))
-    }
-
-    function loginfailure(response){
-        setLogin(false)
-         setUser({})
-    }
-
-    function logoutsuccess(response){
-        setLogin(false)
-         setUser({})
-    }
-
-    function logoutfailure(response){
-        console.log(response)
+    function loginEx(){
+        signInWithPopup(auth,provider).then(res=>{
+            var data=res._tokenResponse
+            setUser({...data})
+            setLogin(true)
+            localStorage.setItem("user",JSON.stringify(data))
+        })
     }
 
     useEffect(()=>{
@@ -54,13 +45,10 @@ const Home=(props)=>{
     return (
         <div className="pv">
             {
-            !login?<GoogleLogin
-                  clientId={cid}
-                  buttonText="Login with google"
-                  cookiePolicy={"single_host_origin"}
-                  onSuccess={loginsuccess}
-                  onFailure={loginfailure}
-                ></GoogleLogin>:
+            !login?<button
+                className="loginbut"
+               onClick={(e)=>loginEx()}
+            >Login</button>:
                 <div>
                         <button onClick={(e)=>{create()}} id="createbut">Create</button>
                 </div>

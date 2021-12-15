@@ -151,3 +151,9 @@
     width: 100%;
   }
 }
+
+.content{
+  width: auto;
+  height: auto;
+  background-color: transparent;
+}
