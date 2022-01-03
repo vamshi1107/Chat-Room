@@ -7,6 +7,8 @@ import { useHistory } from "react-router";
 import GoogleLogin from "react-google-login";
 
 import './home.css';
+import { decrypt, encrypt } from "../../utils/encryptor";
+import { hostpath, statusfetchspath,memberspath } from "../../utils/paths";
 
 const Home=(props)=>{
 
@@ -19,9 +21,10 @@ const Home=(props)=>{
 
      const create=async ()=>{
         var id=randomBytes(16).toString("hex")
-        var col=doc(firestore,"rooms/"+id+"/room/user")
-        console.log(user)
-        var v=await setDoc(col,{"host":user})
+        var col=doc(firestore,hostpath(id))
+        await setDoc(col,{"host":user})
+        var status=doc(firestore,statusfetchspath(id))
+        await setDoc(status,{"active":true})
         history.push("room/"+id)
     }
 
@@ -30,13 +33,14 @@ const Home=(props)=>{
             var data=res._tokenResponse
             setUser({...data})
             setLogin(true)
-            localStorage.setItem("user",JSON.stringify(data))
+            localStorage.setItem("user",encrypt(JSON.stringify(data)))
         })
     }
 
     useEffect(()=>{
-        var data=JSON.parse(localStorage.getItem("user"))
+        var data=localStorage.getItem("user")
         if(data){
+            data=JSON.parse(decrypt(data))
             setUser({...data})
             setLogin(true)
         }

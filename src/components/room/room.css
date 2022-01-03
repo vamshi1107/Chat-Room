@@ -11,6 +11,9 @@
   width: 23%;
   background-color: #1b222c;
   border-right: 1px solid #252f3f;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .canvas {
@@ -143,7 +146,7 @@
   border-radius: 50%;
 }
 
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 900px) {
   .side {
     display: none;
   }
@@ -156,4 +159,45 @@
   width: auto;
   height: auto;
   background-color: transparent;
+}
+
+.memcon {
+  overflow-y: auto;
+  height: 80vh;
+}
+
+.ctrls{
+  align-self: flex-end;
+  height: 15vh;
+  background-color: transparent;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.ctrlbut{
+  width: 60%;
+  height: 35px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: transparent;
+  color: white;
+  margin: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+}
+
+#close{
+  border: 1px solid red;
+  color: red;
+  transition-property: all;
+  transition: all 500ms ease;
+}
+
+#close:hover{
+  background-color: red;
+  color: white;
 }
