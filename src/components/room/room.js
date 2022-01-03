@@ -16,7 +16,7 @@ const Room=(props)=>{
     var [user,setUser]=useState({})
 
     const id=props.match.params.id
-    
+
     const auth=getAuth(firebase)
     const provider = new GoogleAuthProvider();
    
